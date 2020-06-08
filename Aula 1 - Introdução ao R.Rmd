@@ -8,14 +8,23 @@ output: html_notebook
 O que vamos estudar?
 
 1 - Introdução ao R
+
 2 - Estrutura de dados
+
 3 - Funções e estrutura de controle
+
 4 - Importação e exportação de dados
+
 5 - Manipulação de dados - Base R
+
 6 - Manipulação de dados - dplyr
+
 7 - Estatística descritiva
+
 8 - Visualização de dados com ggplot2 - parte 1
+
 9 - Visualização de dados com ggplot2 - parte 2
+
 10 - Teste de hipóteses aplicados a atuária e contabilidade 
 
 
