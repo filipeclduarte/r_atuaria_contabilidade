@@ -1,0 +1,216 @@
+---
+title: "R para Atuária e Contabilidade"
+output: html_notebook
+---
+
+# Introdução
+
+O que vamos estudar?
+
+1 - Introdução ao R
+2 - Estrutura de dados
+3 - Funções e estrutura de controle
+4 - Importação e exportação de dados
+5 - Manipulação de dados - Base R
+6 - Manipulação de dados - dplyr
+7 - Estatística descritiva
+8 - Visualização de dados com ggplot2 - parte 1
+9 - Visualização de dados com ggplot2 - parte 2
+10 - Teste de hipóteses aplicados a atuária e contabilidade 
+
+
+O que é R? 
+Resposta: R é uma linguagem de programação criada por estatísticos. RRRR
+
+O que eu posso fazer com o R?
+Resposta: Escrever programas, notadamente voltados para análise de dados. 
+Esses programas permitem que você realize cálculos, manipule e visualize dados etc. 
+Como cientista e/ou profissional que trabalha com dados, é fundamental que você saiba programar para:
+
+- Armazenar base de dados;
+- Empregar cálculos complexos em grandes bases de dados;
+- Realize operações repetitivamente.
+
+ - Vamos estudar conceitos e operações básicas da linguagem R antes de adentrar no conteúdo atuarial e contábil. 
+ - Após essa breve introdução, estudaremos como utilizar a linguagem R para preparar os dados para análise atuarial e contábil. 
+
+# Operações Básicas no R
+
+Mostrar o número 10:
+```{r}
+10
+```
+
+Posso utilizar a função print()
+```{r}
+print(10)
+```
+
+o R é uma calculadora
+```{r}
+1 + 1
+print(1+1)
+```
+
+```{r}
+10 - 2
+print(10-2)
+```
+
+
+### Atribuição de variáveis
+
+A criação de variáveis no `R` é realizada da forma a seguir:
+
+```{r}
+x <- 10 
+```
+Veja que nada aparece quando eu crio uma variável. É preciso pedir para mostrar o valor contido na variável
+
+```{r}
+x
+```
+
+```{r}
+# Criar a variável x que receberá o valor 10
+x <- 10
+x
+```
+
+Usa-se o símbolo `<-` ou `=` para atribuir o valor 10 à `x`.
+
+Se desejar escrever algum comentário no bloco de código, use `#` antes do texto. O que vier após não será computado no R.
+
+Ex.: Crie duas variáveis, X (valor) e N (quantidade), recebendo 50 e 3, respectivamente. Faça também um comentário, para cada variável, detalhando o seu nome:
+
+
+```{r}
+#meu comentário
+X <- 50 
+N <- 3
+X
+N
+```
+
+```{r}
+Y
+Y <- 100
+Y ** 5
+Y ^ 2
+options(scipen = 999)
+Y ** 5
+```
+
+### Operações matemáticas
+
+Os operadores matemáticos utilizados no `R` são:
+
+adição: +
+subtração: -
+multiplicação: *
+divisão: /
+exponenciação: ^ ou **
+resto da divisão: %% 
+divisão inteira: %/%
+
+Vamos praticar a seguir:
+
+```{r}
+# adição: 2 + 2
+var <- 2+2
+var
+
+# subtração: 50 - 5
+var2 <- 50-5
+var2
+
+# multiplicação: 10 * 40
+d <- 10*40
+d
+
+# divisão: 55 / 3
+var_divisao <- 55/3
+var_divisao
+
+# exponenciação: 2 ^ 5
+VarExp <- 2^5
+2**5
+VarExp
+# resto da divisão: 6 %% 4
+6%%4
+
+# divisão inteira: 6 %/% 4
+6%/%4
+```
+
+Sua vez de exercitar:
+
+```{r}
+# adicione 30 à X
+
+```
+
+```{r}
+# Subtraia 3 de N
+
+```
+
+```{r}
+# Eleve 3 ao cubo
+
+```
+
+```{r}
+# mostre o resto da divisão de 30 por 7
+
+```
+
+```{r}
+# mostre o valor da divisão inteira de 9 por 4
+
+```
+
+Para realizar várias operações matemáticas, como por exemplo 2*5 + 3^5, é importante colocar os parênteses `()` entre as operações:
+
+```{r}
+(3*X) + (N^4)
+
+((2 + X)^2) - ((N/10) + (X^2))^5
+```
+
+
+```{r}
+(2*5) + 3^5
+```
+
+Então, calcule o produto de `N` e `X`, adicione a divisão de 9 por 10 e multiplique o resultado pela pela subtração de 5 por 2. 
+
+```{r}
+
+```
+
+## Tipos de objetos
+
+O objeto mais comum no `R` é o vetor, podendo ser representado por:
+
+* números inteiros: ex.: 10
+* números reais: ex.: 10.5
+* números complexos: ex.: 1i
+* valores booleanos: e.: TRUE ou FALSE
+* caracteres: ex.: "Filipe"
+
+```{r}
+meu_nome <- "Filipe"
+meu_nome
+MeuNome <- "Filipe"
+MeuNome
+
+print(meu_nome)
+meu_nome
+meu_nome == MeuNome 
+
+MeuNome <- "filipe"
+print(MeuNome)
+meu_nome == MeuNome
+```
+
