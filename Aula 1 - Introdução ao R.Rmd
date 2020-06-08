@@ -19,6 +19,22 @@ O que vamos estudar?
 10 - Teste de hipóteses aplicados a atuária e contabilidade 
 
 
+## Agenda da aula de hoje (Introdução ao R)
+
+- Abrindo o Rstudio e o Rstudio Cloud
+- Ambiente de trabalho
+- Como rodar um comando
+- Como escrever um script
+- Rmarkdown (notebook)
+- Operações básicas
+- Exercícios
+- Objetos
+- Ambiente
+- Nome para objetos
+- ls()
+- Operações com objetos
+
+
 O que é R? 
 Resposta: R é uma linguagem de programação criada por estatísticos. RRRR
 
