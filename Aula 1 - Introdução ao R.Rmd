@@ -191,7 +191,7 @@ Então, calcule o produto de `N` e `X`, adicione a divisão de 9 por 10 e multip
 
 ## Tipos de objetos
 
-O objeto mais comum no `R` é o vetor, podendo ser representado por:
+O objeto mais comum no `R` é o vetor. Um vetor apresenta o mesmo tipo para os seus valores, que podem ser do tipo:
 
 * números inteiros: ex.: 10
 * números reais: ex.: 10.5
@@ -213,4 +213,37 @@ MeuNome <- "filipe"
 print(MeuNome)
 meu_nome == MeuNome
 ```
+
+### Operadores de comparação
+
+São utilizados nas operações condicionais cujo resultado é um valor VERDADEIRO (1) ou FALSO (0). Sendo assim, precisamos de um operador de comparação para realizar a operação entre dois valores. Os operadores de comparação são:
+
+•	< (menor)
+•	> (maior)
+•	<= (menor ou igual)
+•	>= (maior ou igual)
+•	== (igual)
+•	!=  (diferente)
+
+Esses operadores são vastamente utilizados na matemática e na programação. 
+
+```{r}
+x <- 10
+y <- 5
+# menor
+x < y
+# maior
+x > y
+# menor ou igual
+x <= y
+# maior ou igual
+x >= y
+# igualdade
+x == y
+# diferente
+x != y
+```
+
+Chegamos ao fim da aula de hoje!
+Próxima aula estudaremos estrutura de dados do R como vetores, dataframe
 
