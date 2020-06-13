@@ -1,0 +1,423 @@
+---
+title: "Aula 2 - Estrutura de Dados"
+output:
+  html_document:
+    df_print: paged
+---
+
+## Agenda
+
+* Vetor
+* Matriz
+* Data frame
+* Lista
+
+### Estrutura de dados
+
+O R possui diversos tipos de objetos para se trabalhar com dados, os quais podem ser representados por escalares, vetores, matrizes, data frames e listas. 
+
+Veja abaixo uma figura que ilustra como funciona a estrutura de dados no R:
+
+![Estrutura de dados no R](estrutura_dados_r.png)
+
+
+#### 1. Vetor
+
+É um vetor de dados. Nele você agrupa valores de mesmo tipo. Semelhante ao que você estuda no curso de matemática.
+
+Para criar um vetor utilize o comando `c()` com os valores separados por vírgulas.
+
+Ex.: c(1, 2, 3, 4, 5)
+
+```{r}
+c(1, 2, 3, 4, 5)
+```
+
+Veja que não salvamos esse vetor, apenas pedimos para mostrá-lo. Agora vamos criar atribuir ao objeto chamado `vetor`.
+
+```{r}
+vetor <- c(1, 2, 3, 4, 5)
+
+vetor
+```
+
+O R possui uma forma bem simples de criar um vetor para representar uma sequência de valores. Digamos que desejamos criar um vetor que é uma sequência de 1 até 10. Para criar esse vetor, basta digitar o código `1:10`. Ou seja, digite o primeiro valor, em seguida digite `:`, e por fim o valor final da sequência. 
+
+```{r}
+1:10
+```
+
+Vamos criar outro vetor, chamado meu_vetor cujos valores são 1, 5, 10 e 20.
+
+```{r}
+meu_vetor <- c(1, 5, 10, 20)
+```
+
+Perceba que ao executar o código de atribuição, nada é mostrado. 
+
+Visualize o objeto meu_vetor:
+```{r}
+meu_vetor
+```
+
+obs.: É possível criar vetores com valores lógicos (booleanos) ou caracteres.
+
+```{r}
+c(TRUE, TRUE, FALSE)
+c("Oi,", "como", "vai?")
+```
+
+Lembre-se, o vetor só aceita valores de mesmo tipo. Vamos criar um vetor com texto chamado nomes.
+
+```{r}
+nomes <- c("Filipe", "Luiz", "João", "Carlos") 
+```
+
+Mostre esse vetor por meio da função `cat()` e `print()`. 
+
+```{r}
+cat(nomes)
+print(nomes)
+```
+
+Qual a diferença?
+
+Agora é sua vez. Crie dois vetores e mostre-os em seguida. O primeiro vetor será chamado de `ano`, enquanto o segundo de `resultado`. Os dados estão dispostos na tabela a seguir:
+
+ano | resultado
+:----:|:----:
+2015 | 1000
+2016 | -500
+2017 | 300
+2018 | 440
+
+```{r}
+# crie os dois vetores: ano e resultado
+
+```
+
+#### Tamanho do vetor - length()
+
+A função `length()` é empregada para saber a quantidade de elementos de um vetor. 
+
+Qual o tamanho do vetor `nomes`?
+
+```{r}
+length(nomes)
+```
+
+R: 4 elementos
+
+Utilize a função `length()` para saber o tamanho do vetor `resultado`. 
+
+#### Operações com vetores
+
+O R realiza operações de vetores elemento a elemento. Isso pode ser chamado de vetorização, que facilita nossa vida. 
+
+Digamos que eu desejo dividir todos os elementos do `meu_vetor` por 2. 
+
+```{r}
+meu_vetor / 2
+```
+
+Você pode empregar diversas operaçoes entre vetores como soma, subtração, exponenciação, divisão etc.
+
+Vamos somar dois vetores `a <- c(1, 2, 3, 4)` e `b <- c(2, 5, 7, 10)`.
+
+```{r}
+a <- c(1, 2, 3, 4)
+b <- c(2, 5, 7, 10)
+a + b
+```
+
+É importante utilizar vetores de mesmo tamanho. 
+
+Pratique: Realize as operações a seguir:
+```{r}
+# Subtração a - b
+
+# Multiplicação a * b
+
+# Divisâo b / a
+
+# Exponenciação a ^ 2 
+
+# Exponenciação a ^ b
+
+# Operação lógica: a >= b
+
+```
+
+ 
+#### Indexação de vetores
+
+A indexação tem o objetivo de selecionar os elementos por sua posição. 
+
+O R tem indexação iniciando no número 1. Portanto, vamos aprender a indexar abaixo.
+
+Criaremos um vetor numérico.
+```{r}
+vetor_num <- c(-1, 2, 5, -30)
+vetor_num
+```
+
+Para indexar o vetor, vamos digitar a posição de interesse entre as chaves após o nome do vetor tipo: `vetor[i]`, onde i é a posição de interesse. Vamos selecionar o valor na 1ª posição.
+
+```{r}
+vetor_num[1]
+```
+
+Selecionar o elemento na 3ª posição:
+```{r}
+vetor_num[3]
+```
+
+Selecionar uma sequência de valores: É possível criar um vetor de posições, do tipo `1:3` para selecionar do 1º ao 3º elemento do vetor. 
+
+```{r}
+vetor_num[1:3]
+```
+
+É possível criar um vetor tradicionalmente, digamos que desejamos selecionar o 1º e o 4º elemento:
+
+```{r}
+vetor_num[c(1,4)]
+```
+
+A indexação é muito útil no processo de manipulação e análise de dados. 
+
+Você poderá alterar os valores dos vetores por meio da declaração e indexação.
+
+Digamos que você quer alterar o 1º elemento do `vetor_num` para o valor `0`.
+
+```{r}
+vetor_num[1] <- 0
+vetor_num
+```
+
+Além disso, podemos criar um novo vetor a partir dos vetores existentes, utilizando a função `c()`.
+
+Quero adicionar dois novos valores, 3 e 100, basta concatenar os valores ao vetor:
+
+```{r}
+c(vetor_num, 3, 100)
+
+# Um detalhe: É possível adicionar valores ao final dos vetores por meio da posição (evite)
+vetor_num[5] <- 3
+vetor_num[6] <- 100
+
+vetor_num
+
+```
+
+Agora sua vez de praticar:
+
+- Mostre o 1º e 3º elemento do vetor `ano` e o último valor do vetor `resultado`.
+
+- Adicione o ano 2019 ao vetor `ano` e o resultado 300 ao vetor `resultado`.
+
+```{r}
+
+```
+
+### 2. Matriz
+
+Uma matriz representa um conjunto de vetores de mesmo tamanho. Normalmente a ordem de preferência se dá por coluna.
+
+Para se criar uma matriz, utiliza-se o comando `matrix(data, nrow, ncol, byrow=FALSE)`. 
+
+Esse comando significa que você irá digitar:
+
+- os valores em `data`.
+
+- a quantidade de linhas em `nrow`.
+
+- a quantidade de colunas em `ncol`.
+
+- Ordem de preenchimento dos valores por colunas: `byrow = FALSE` - Esse comando pode ser omitido.
+
+- Se desejar a ordem por linhas, utilize `byrow = TRUE`. (obrigatório)
+
+
+Criaremos uma matriz com 3 linhas e 2 colunas, com os valores de 1 até 6:
+
+```{r}
+matrix(data = 1:6, nrow = 3, ncol = 2)
+# pode-se omitir o byrow = FALSE
+
+```
+
+Para preencher por linha:
+```{r}
+matrix(data = 1:6, nrow = 3, ncol = 2, byrow=TRUE)
+```
+
+Para criar uma matriz vazia, apenas identifique a quantidade de linhas e colunas desejadas. 
+
+```{r}
+# matriz com 10 linhas e 5 colunas
+matrix(nrow = 10, ncol = 5)
+```
+
+Agora você visualizou o valor `NA`. Esse valor significa a falta de informação para um determinado objeto. No caso em questão, é uma matriz sem valores. 
+
+obs.: Para verificar a quantidade de linhas e colunas (dimensão), utilize o comando `dim(matriz)`.
+
+#### Indexação em Matrizes
+
+Você pergunta: Como faço para acessar os valores da matriz? Como faço para adicionar valores à matriz?
+
+Use a mesma lógica empregada aos vetores, exceto pelo fato de você possuir mais de 1 dimensão. Agora temos quantidades de linhas e colunas. 
+
+Para acessar os valores de uma matriz, utilize as chaves e separe `[i,j]` em notação matricial, onde `i` representa a linha e `j` a coluna. Perceba que você poderá selecionar um conjunto de linhas e/ou colunas. 
+
+```{r}
+# vamos criar uma matriz chamada mat 
+mat <- matrix(nrow = 3, ncol = 4)
+mat
+```
+
+```{r}
+# vamos substituir o valor NA do elemento [1,1] por `2`
+mat[1,1] <- 2
+mat
+```
+
+Sua vez: Substitue o `NA` da linha 2, coluna 4, pelo valor 1.
+
+```{r}
+
+```
+
+Um detalhe, se você omitir a posição da linha ou da coluna, você fará a alteração na dimensão selecionada.
+Por exemplo, digamos que desejo alterar os valores da 3ª coluna por 5.
+
+```{r}
+mat[,3] <- 5
+mat
+```
+
+Verifique que eu não destaquei qual seria a linha. Deixei omitido e isso fez com que houvesse a substituição da coluna por inteiro. 
+
+Pratique: Faça a substituição dos valores NA's das 1ª e 2ª linhas, e 2ª e 3ª linnhas por `-1`. 
+
+```{r}
+
+```
+
+### 3. Data frame
+
+`Data frame` é o modelo mais utilizado pelos usuários do R para trabalhar com dados estruturados. É semelhante a uma tabela de excel, em que as linhas representam os indivíduos (observações), enquanto as colunas são as variáveis. 
+
+Outro diferencial é a possibilidade de utilizar variáveis (colunas) de classes diferentes, o que não seria possível na matriz. As matrizes só aceitam um tipo de objeto e não permitem adição ou remoção da quantidade de linhas e/ou colunas. Essas operações são possíveis no data frame. 
+
+A função para criar um data frame é `data.frame()`. Vamos reunir 3 vetores em apenas um objeto que chamaremos de `df`:
+
+```{r}
+empresa <- c("XYZ", "YQX", "IXX", "VXY")
+receita <- c(100, 320, 500, 40)
+despesa <- c(85, 300, 390, 42)
+df <- data.frame(empresa, receita, despesa, stringsAsFactors = FALSE) # os textos não serão classes
+df
+```
+
+Veja que criamos uma tabela de dados, em que cada linha representa uma observação e cada coluna representa uma variável.
+
+#### Indexação em um data frame
+
+A indexação em data frames é semelhante à empregada nas matrizes. Utilize o operador `[i,j]`.
+
+Se desejarmos ver apenas a primeira linha:
+
+```{r}
+df[1,]
+```
+
+Se quisermos ver apenas as 1ª e 2ª colunas da 2ª linha:
+
+```{r}
+df[2,1:2]
+```
+
+Pratique: Digamos que você deseja ver as informações 2ª e 4ª empresa, qual código você utilizaria?
+
+```{r}
+# digite o código
+
+```
+
+Continuação: Você verificou que faltou adicionar os dados da empresa `UXM`. A receita e despesa foram `44` e `80`, respectivamente:
+```{r}
+# digite o código
+
+```
+
+Existe uma forma de acessar as colunas diretamente. No nosso caso, podemos acessar a coluna `receita` da seguinte forma: `df$receita`. A seleção se dá pelo nome da coluna após o `$`. 
+
+```{r}
+df$receita
+```
+
+### Operações com Data Frame
+
+Veja que isso ajuda nas operações entre as colunas dos data frames. 
+
+Calcule o resultado das empresas, como sendo `receita - despesa`.
+
+```{r}
+# calcule o resultado 
+
+```
+
+Podemos operacionalizar por linha, sendo que a indexação deve ser a matricial. 
+Calcular a diferença da receita de `YQX` e `IXX`.
+
+```{r}
+# receita é a 2ª coluna
+df[2,2] - df[3,2] 
+```
+
+Essas operações serão fundamentais no processo de manipulação e análise de dados das próximas aulas. É importante que você aprenda as estruturas de dados antes de implementar códigos mais complexos. 
+
+#### 4. Lista
+
+Por fim, estudaremos a lista. A lista é uma forma de organizar diversos objetos do R. 
+Você pode criar uma lista combinando vetores unitários, vetores, matrizes e data frames. 
+Além disso, os objetos contidos na lista podem não possuir relação entre si, o que gera uma certa complexidade nesse tipo de objeto. 
+
+Para criar uma lista, basta utilizar a função `list()` e adicionar os objetos separados por vírgulas.
+É importante que você dê nomes aos objetos, por exemplo:
+Criaremos uma lista com os objetos `vetor_num`, `nomes` e `mat`. 
+
+```{r}
+lista <- list(vetor = vetor_num, nomes = nomes, matriz = mat)
+lista
+```
+
+### Indexação em lista
+
+A indexação em lista é um pouco diferente dos data frames. Para mostrar o primeiro elemento, você precisa colocar duas chaves: `lista[[1]]`
+
+```{r}
+lista[[1]]
+```
+
+Para mostrar o 2º elemento desse vetor, utilize a indexação vetorial após a indexação da lista: `lista[[1]][2]`
+
+```{r}
+lista[[1]][2]
+```
+
+Agora sua vez de praticar: Qual o comando de indexação que mostra o nome "João"?
+
+```{r}
+
+```
+
+
+A indexação da lista terá uma complexidade dependendo de quantos e quais elementos você anexar a ela. 
+
+Isto posto, chegamos ao final desta aula de estrutura de dados. 
+Espero que tenham gostado. Qualquer dúvida, envie email para fcld@academico.ufpb.br.
+
+Bons estudos!!!
