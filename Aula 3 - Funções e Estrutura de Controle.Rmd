@@ -1,0 +1,222 @@
+---
+title: "Aula 3 - Funções e Estrutura de Controle"
+output: html_notebook
+---
+
+### Agenda
+
+1. Operações Condicionais
+2. Funções
+3. Estrutura de Controle - for loop
+4. Estrutura de Controle - apply
+
+## 1. Operações Condicionais
+
+Vamos relembrar os operadores de comparação são:
+
+* Igualdade: ==
+* Não igual: !=
+* Menor: <
+* Maior: >
+* Menor ou igual: <=
+* Maior ou igual: >=
+
+Vamos aprender os Operadores lógicos são:
+
+* E: &
+* Ou: |
+
+A partir desses operadores, utilizaremos a função `if()` para avaliar as condições lógicas.
+
+A sintaxe de uma operação lógica pode ser expressa a partir dessa função `if()`, em que o seu argumento será a condição com operadores de comparação e/ou lógicos. 
+
+Se quiser rodar um determinado código apenas se a condição for verdadeira e se a condição for falsa, queremos que nada seja feito, então:
+
+`if (condição) {
+    comandos a serem executados caso a codição seja verdadeira
+}`
+
+Exemplo: Imprima (use a função `cat()`) o valor da variável **C** se o seu valor for menor do que 10:
+```{r}
+# testando C = 7
+C <- 7
+if(C<10){
+  cat(C)
+}
+# testando C = 12
+C <- 12
+if(C<10){
+  cat(C)
+}
+```
+
+Perceba que ao atribuir o valor 12 à variável C, nada acontece. Isso ocorre porque a condição (C<10) não foi verdadeira. 
+
+Esse tipo de operação não é muito comum na prática, na verdade você gostaria que algo fosse realizado quando a condição não fosse verdadeira. Neste caso, utiliza-se a operação `else` após a chave "}" da função `if()`. Por exemplo, no exemplo anterior caso a condição não seja verificada, peça par ao R imprimir a frase: "O valor de C é maior ou igual a 10!":
+
+```{r}
+C <- 12
+if(C<10){
+  cat(C)
+}else{
+  cat("O valor de C é maior ou igual a 10!")
+}
+```
+
+Vamos utilizar outros operadores de comparação. Se você desejar que duas condições sejam verdadeiras, utilize e `&`, ao passo que quando desejar que pelo menos uma seja verdadeira, use `|`. 
+
+Veremos abaixo como aplicar esse operadores ao criar um teste que se valida a condição se **Idade** for maior ou igual a 60 e **Tempo_contribuicao** for maior ou igual a 30. Se a condição for atingida, o programa imprimirá ambos os valores com o texto "Condição atingida" em seguida. Se pelo menos uma das condições não forem verdadeiras, imprimirá os valores e a frase "Condição não atingida" em seguida. 
+
+```{r}
+# vamos testar com a condição verdadeira
+Idade <- 65
+Tempo_contribuicao <- 31
+if(Idade >= 60 & Tempo_contribuicao >= 30){
+  cat("Idade =",Idade,"e","Tempo de Contribuição =",Tempo_contribuicao,"Condição atingida!")
+}else{
+    cat("Idade =",Idade,"e","Tempo de Contribuição =",Tempo_contribuicao,"Condição não atingida!")
+}
+# testar falso
+
+```
+
+Agora, faça uma função que avalia se pelo menos uma das condições acima é verdadeira. Dessa forma, a condição só será falsa se ambos os valores forem diferentes.
+
+```{r}
+
+```
+
+## Criando Funções
+
+Uma função serve para que possamos automatizar os cálculos. Toda vez que você se deparar com algum problema em que será necessário repetir um cálculo ou uma certa tarefa, crie uma função para automatizar esse procedimento. 
+
+Para se criar uma função, basta atribuir um nome a sua função e utilizar o código `function()` com os parâmetros necessários entre os parênteses. Por exemplo, vamos criar uma função que recebe dois valores, x1 e x2, retornando o produto entre eles. 
+
+```{r}
+# criando a função
+minha_funcao <- function(x1, x2){
+  return(x1 * x2)
+}
+
+# vamos testar
+minha_funcao(x1 = 20, x2 = 2)
+minha_funcao(20,4)
+```
+
+Sua vez: crie uma função que recebe dois valores e imprime o maior. 
+
+```{r}
+
+```
+
+Vamos escrever uma função que calcula o valor presente (desconto financeiro) de um capital. Essa função terá como argumentos o valor futuro (vf), a taxa de juros (i) e o tempo (t).
+
+A fórmula do valor presente é dado por:
+
+$$
+VP = \frac{VF}{(1+i)^t}
+$$
+
+```{r}
+# Função valor presente vp
+vp <- function(vf, i, t){
+  return(vf/(1+i)^t)
+}
+
+vp(1, 0.06, 1)
+```
+
+Lembre-se que o R realiza operações vetorizadas e, dessa maneira, é possível utilizar funções para cada elemento de um vetor, matriz, data frame etc. Isso vai te ajudar bastante lá na frente!
+
+Sua vez: Escreva uma função que calcula a média de um vetor, e imprime em seguida o texto "A média é `media_calculada`". 
+A média para o vetor x é calculada a partir da fórmula: $$\frac{1}{n}\sum_{i=1}^{n}x_i$$  
+onde $n$ é a quantidade de elementos do vetor x.
+Utilize a função `sum()` que soma todos valores de um vetor, e a função `length()` que diz a quantidade de elementos do vetor. 
+
+```{r}
+
+```
+
+
+## Estrutura de controle 
+
+A estrutura de controle que vamos estudar é chamada de **for loop**. É um laço de repetição e sua estrutura básica pode ser generalizada para:
+
+`for(i in valores){
+  # comandos a serem repetidos
+}`
+
+Um **for loop** pode ser empregado quando você necessitar realizar um cálculo repetidamente. Digamos que você deseja calcular a quantidade de números ímpares do vetor `x`. Como você escreveria um código para solucionar esse problema? 
+
+```{r}
+x <- c(1, 2, 5, 6, 9, 12, 15, 20, 31)
+contador <- 0 # servirá para salvar a quantidade de números ímpares
+for(valor in x){
+  if(valor %% 2 != 0){ # resto da divisão diferente de 0 garante que é número ímpar
+    contador <- contador + 1 # somar mais 1 número ímpar
+  }
+}
+cat(contador)
+```
+
+Vamos ver outro exemplo: digamos que você possui um data frame em que cada linha representa uma pessoa e cada coluna representa o salário de cada mês. Como faríamos para:
+
+1. calcular a soma dos salários para cada indivíduo? 
+
+2. calcular a soma dos salários para cada mês?
+
+```{r}
+# Data frame salários
+id_1 <- seq(2000, 2060, length.out = 12)
+id_2 <- seq(1050, 1080, length.out = 12)
+id_3 <- seq(3250, 3347.50, length.out = 12)
+id_4 <- seq(1500, 1545, length.out = 12)
+
+df_salario <- as.data.frame(rbind(id_1, id_2, id_3, id_4))
+
+names(df_salario) <- paste('Mês',1:12)
+
+df_salario
+```
+
+Para responder ao quesito n.1, utilizando a estrutura de controle for loop, nós precisamos calcular a soma (a partir da função `sum()`) para cada linha. Salve esses valores em um novo vetor chamado soma_salario. Em seguida, atribua os nomes dos indivíduos aos valores do novo vetor. 
+
+```{r}
+# soma dos salários 
+soma_salario <- rep(NA, nrow(df_salario)) # função rep serve para repetir valores n vezes.
+
+for(linha in 1:nrow(df_salario)){ # função nrow(df) diz a quantidade de linhas de um df
+  soma_salario[linha] <- sum(df_salario[linha,]) # indexação para as linhas 
+}
+
+soma_salario # visualizando o vetor soma_salario
+
+# posso atribuir os nomes aos indivíduos dessa forma
+names(soma_salario) <- row.names(df_salario)
+soma_salario
+```
+
+Agora é sua vez, faça o quesito n. 2
+
+```{r}
+# quesito n.2: calcule a soma dos salários de todos os id para cada mês.
+
+```
+
+Esse procedimento pode ser muito trabalhoso quando o código possuir diversos procedimentos dentro de um laço de repetição. Isso foi um dos motivos pelos quais inventaram uma classe de funções - `apply`. Ela realiza a aplicação de uma determinada função em uma dada dimensão de um data frame. Sendo assim, essa função tem a seguinte estrutura: 
+`apply(x, MARGIN, function)`, 
+onde `x` é o data frame, `MARGIN`, a dimensão (linha = 1, coluna = 2) e `function` é a função a ser aplicada.
+
+Vamos responder o quesito n.1 e n.2 com ela:
+
+```{r}
+apply(df_salario, MARGIN = 1, sum) # MAGRIN = 1 - aplica em linha
+apply(df_salario, MARGIN = 2, sum) # MARGIN = 2 - aplica em coluna
+```
+
+Veja que esse tipo de função facilita absurdamente nossa vida, pois reduz consideravelmente a quantidade de linhas de códigos que precisam ser escritas. Além disso, é muito mais fácil de ser compreendida quando comparamos com o mesmo código escrito com o laço de repetição `for`.
+
+Chegamos ao fim de mais uma aula! Se possuir alguma dúvida, podes enviar email para: fcld@academico.ufpb.br 
+
+Além disso, se você fizer uma busca no google, é muito provável que encontre uma resposta para o seu problema. 
+
