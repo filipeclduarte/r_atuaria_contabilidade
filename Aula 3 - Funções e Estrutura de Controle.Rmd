@@ -176,6 +176,7 @@ df_salario <- as.data.frame(rbind(id_1, id_2, id_3, id_4))
 
 names(df_salario) <- paste('Mês',1:12)
 
+
 df_salario
 ```
 
