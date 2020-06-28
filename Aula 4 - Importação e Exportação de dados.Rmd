@@ -1,0 +1,193 @@
+---
+title: "Aula 4 - Importação e Exportação de Dados"
+output: html_notebook
+---
+
+### Conteúdo
+
+1. Importação de dados
+2. Exportação de dados
+
+
+## 1. Importação de dados
+
+Vamos aprender a importar dados nos seguintes formatos:
+ 
+- `.txt`
+- `.csv`
+- `.xls` ou `.xlsx`
+
+Você pode importar dados dentro ou fora do diretório de trabalho. Eu recomendo que você sempre verifique o diretório de trabalho com o comando `getwd()`. 
+
+Se o arquivo estiver no diretório de trabalho, você pode atribuir o nome do arquivo diretamente à variável, por exemplo: 
+
+`meu_arquivo <- "base_dados.csv"`
+
+No caso do arquivo não estar contido na pasta de trabalho, é possível escrever o caminho do diretório ao arquivo:
+
+`meu_arquivo <- "/Users/filipeduarte/base_dados.csv"`
+
+No caso acima, digamos que eu esteja localizado em um diretório que não seja 'filipeduarte', mas estou interessado em importar 'base_dados.csv' localizada lá. 
+
+O R vai importar os dados no formato de `data frame`, ou seja, no formato de uma tabela de dados. 
+
+A função para importar arquivos em `.txt` ou `.csv` é `read.csv()` quando o separador decimal for "."; ou `read.csv2()` quando o separador decimal for ",". 
+
+Normalmente, quando o arquivo é salvo com o separador decimal ",", o separador dos valores acaba sendo ";". Sendo assim, se você usar a função `read.csv()`, o R não vai conseguir entender o formato adequado. Veja a seguir, 
+
+Vamos iniciar a importação de dados com um arquivo .txt:
+
+```{r}
+meus_dados_1 <- 'dados_1.txt' 
+dados_1 <- read.csv(meus_dados_1, stringsAsFactors = FALSE)
+str(dados_1)
+
+dados_1
+```
+
+A forma correta seria:
+
+```{r}
+# importação de arquivo em formato .txt
+dados_1 <- read.csv2(meus_dados_1, stringsAsFactors = FALSE)
+
+# visualizar a estrutura dos dados
+str(dados_1)
+
+dados_1
+```
+
+Agora vamos importar a base de dados com "." como separador decimal. A base utilizada será "dados_2.txt"
+
+```{r}
+meus_dados_2 <- 'dados_2.txt'
+
+dados_2 <- read.csv(meus_dados_2, stringsAsFactors = FALSE)
+
+str(dados_2)
+
+dados_2
+```
+
+O mesmo pode ser utilizado para importar aquivos que tenham sido criados com a extensão `.csv`.
+
+Podemos colocar o nome do arquivo diretamente na função:
+
+```{r}
+# antes de importar, vamos apagar os dados previamente importados
+rm(list=ls())
+
+# agora podemos importar novamente
+dados_1 <- read.csv2('dados_1.csv', stringsAsFactors = FALSE)
+
+str(dados_1)
+
+dados_1
+```
+
+```{r}
+# agora vamos importar dados_2
+dados_2 <- read.csv('dados_2.csv', stringsAsFactors = FALSE)
+dados_2
+```
+
+Se o arquivo estiver no formato de excel `.xls` ou `.xlsx`, você precisará instalar o pacote `readxl`. 
+
+```{r}
+#instalar pacote
+install.packages("readxl")
+
+# após instalar, é possível carregar
+library(readxl)
+```
+
+A função para importar aquivos em `.xls` é `read_xls()`, ao passo que para importar arquivos em `.xlsx` é necessário utilizar `read_xlsx()`.
+
+Vamos importar a planilha "dados.xlsx":
+
+```{r}
+dados <- read_xlsx("dados.xlsx")
+
+str(dados)
+
+dados
+```
+
+A função importa os dados no formato `tibble` que é semelhante ao `data frame`. 
+
+Para importar outra aba da planilha, você pode identificá-la com o parâmetro `sheet`. Veja a seguir:
+
+```{r}
+dados_nome <- read_xlsx('dados.xlsx', sheet = "Planilha2")
+
+str(dados_nome)
+
+dados_nome
+```
+
+## 2. Exportação de dados
+
+O processo de exportação de dados inicia com a definição dos dados, o diretório e o nome a ser definido para o arquivo. 
+
+Para exportar arquivo em `.txt`, utilize a função `write.table()`
+
+Tome cuidado com o separador decimal, faça destaque para o formato ','. 
+
+```{r}
+# vamos criar uma tabela para ser exportada
+set.seed(1)
+
+tabela_1 <- data.frame(id = 1:5, rentabilidade = rnorm(5), idade = round(runif(5, 20, 50), 0))
+
+str(tabela_1)
+
+tabela_1
+```
+
+```{r}
+# para exportar em .txt 
+write.table(tabela_1, 'tabela_1.txt', dec = ',')
+```
+
+Para exportar em csv, utilize: `write.csv()` para exportar com '.' como separador decimal;  `write.csv2()` para exportar com ',' como separador decimal. 
+
+```{r}
+# exportar em .csv
+write.csv(tabela_1, 'tabela_1.csv')
+
+# exportar em .csv2 - atribuiremos o nome 'tabela_1_2.csv' para não sobrepor o arquivo anterior
+write.csv2(tabela_1, 'tabela_1_2.csv')
+```
+
+A função `write.csv()` cria uma coluna adicional para as linhas. Se você quiser removê-la, basta adicionar `row.names = FALSE` dentro da função, vejamos:
+
+```{r}
+write.csv(tabela_1, 'tabela_1.csv', row.names = FALSE)
+
+write.csv2(tabela_1, 'tabela_1_2.csv', row.names = FALSE)
+```
+
+Para exportar aquivos no formato de excel, `.xlsx`, é preciso instalar o pacote `writexl`
+
+```{r}
+# instalar
+install.packages("writexl")
+
+# carregar
+library(writexl)
+```
+
+Vamos exportar a tabela no formato de excel:
+
+```{r}
+write_xlsx(tabela_1, 'tabela_1_excel.xlsx')
+```
+
+Isto posto, agora você poderá importar e exportar dados em diversos formatos. 
+
+Lembre-se de praticar importando e exportando dados diferentes dos utilizados nesta aula. 
+
+Bons estudos!!!
+
+
+
