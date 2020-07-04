@@ -1,0 +1,270 @@
+---
+title: "Aula 5 - Manipulação de dados - R base"
+output: html_notebook
+---
+
+#### Conteúdo da aula
+
+* Importação da base de dados
+* Verificação da estrutura dos dados
+* Modificação dos nomes das variáveis
+* Alteração de valores das variáveis
+* Alteração dos tipos das variáveis
+* Trabalhando com valores no formato de data
+
+### INTRODUÇÃO
+
+Esta aula é dedicada ao processo de organização, limpeza e estruturação dos dados. Normalmente, é um dos procedimentos mais trabalhosos para os pesquisadores e cientistas de dados. 
+
+A preparação de dados é necessária quando os dados apresentam informações incorretas para uma ou mais mais observações (exemplos), quando faltam informações, quando necessitamos criar novas variáveis etc. 
+
+Além disso, as tabelas, muitas vezes, não estão estruturadas no modelo padrão, onde cada linha representa um indivíduo (exemplo) e as colunas configuram as variáveis ou características dos indivíduos.  
+
+Dessa feita, vamos iniciar o nosso trabalho a partir de uma base de dados de participantes, na qualidade de ativos, de um plano de previdência. O arquivo foi denominado **BasePens.csv** e precisa ser importado para o `R`.
+
+### BASE DE DADOS
+
+Nossa base possui 749 pessoas e 8 variáveis tais quais:
+
+- ID - representa a identificação do participante
+- SEXO - 1 para o sexo feminino, 2 para o masculino
+- ESTADO.CIVIL - 1 para solteiro(a); 2 para casado(a); 3 para viúvo(a); 4 para separado(a) judicialmente; 5 para divorciado(a); 6 para união estável; e 9 outros 
+- DATA.DE.NASCIMENTO.dd.mm.aaaa - data de nascimento do participante, no formato dd/mm/aaaa
+- DATA.DE.INGRESSO.NO.FUNDO.dd.mm.aaaa - data de ingresso no plano previdenciário, no formato dd/mm/aaaa
+- CARREIRA.ATUAL - função exercída (profissão)
+- BASE.DE.CALCULO.MENSAL - salário de contribuição para a previdência
+- NÚMERO.DE.DEPENDENTES - quantidade de dependentes do participante (elegíveis para pensão)
+
+Para importar a base de dados pelo `R`, vamos usar a função `read.csv2`, pois a base foi salva com a virgula como separador decimal.
+
+A base pode ser acessada por meio do link: "https://raw.githubusercontent.com/filipeclduarte/EDA_R/master/BasePens.csv".
+
+
+```{r}
+# Vamos fazer download direto do github
+url <- "https://raw.githubusercontent.com/filipeclduarte/EDA_R/master/BasePens.csv"
+
+temp <- tempfile()
+
+download.file(url, temp)
+
+dados <- read.csv2(temp)
+```
+
+#### Estrutura dos dados importados 
+
+Agora vamos visualizar se a importação da base foi realizada de forma correta, através da função `str` que nos apresenta a estrutura dos dados.
+
+```{r}
+str(dados)
+```
+#### Nome das variáveis (colunas)
+
+Percebe-se que a importação foi um sucesso, contudo não podemos dizer o mesmo quanto à codificação dos dados. A variável `SEXO` e `ESTADO.CIVIL` foram importadas como número inteiro; a `DATA.DE.NASCIMENTO.dd.mm.aaaa...`, `DATA.DE.INGRESSO.NO.FUNDO.dd.mm.aaaa` foram importadas como *character*.
+
+Antes de realizar os ajustes necessários, vamos visualizar as 6 primeiras linhas da base:
+
+```{r}
+head(dados, 6)
+```
+
+Vamos visualizar os nomes das colunas. É possível utilizar duas funções: `names()` ou `colnames()`.
+
+```{r}
+names(dados)
+colnames(dados)
+```
+
+Agora, vamos renomear as variáveis para que o processo de limpeza seja feito de maneira mais fácil, e em seguida vamos mostrar novamente os nomes das 6 primeiras linhas e a estrutura dos dados: 
+
+Vamos selecionar os seguintes nomes para representar as colunas: 
+
+* `id`
+* `sexo`
+* `estado_civil`
+* `data_nascimento`
+* `data_ingresso`
+* `carreira_atual`
+* `base_calculo_mensal`
+* `qtd_dependentes`
+
+
+```{r}
+# criando vetor para representar os nomes das variáveis
+var_nomes <- c("id", "sexo", "estado_civil", "data_nascimento", 
+                  "data_ingresso", "carreira_atual", "base_calculo_mensal", "qtd_dependentes")
+
+# alterando os nomes: o nome das colunas de dados vai receber o vetor var_nomes
+colnames(dados) <- var_nomes
+
+# visualizar os nomes
+colnames(dados)
+```
+
+Vamos visualizar agora as 6 primeiras linhas do nosso data frame.
+
+```{r}
+head(dados, 6)
+```
+
+Agora, visualizaremos a estrutura de `dados` após a renomeação:
+
+```{r}
+str(dados)
+```
+
+#### Alterar valores e tipos das variáveis
+
+O próximo passo será alterar o tipo das variáveis `sexo` e `estado_civil` para `factor` e codificar corretamente as categorias (atribuir o nome correto à categoria). 
+
+Para isso alterar as linhas por meio de operações condicionais, usaremos a função `ifelse()`, a qual tem como operação um teste lógico do tipo `==`, `>=`, `<` etc, e tem como resultado a atribuição de um valor ou um texto caso o resultado seja VERDADEIRO. Ainda, é preciso fixar o valor a ser atribuído caso o resultado da condição lógica seja falso. 
+
+`ifelse(dados$vetor == valor, 'verdadeiro', 'falso')`
+
+```{r}
+# Visualizar as primeiras 20 linhas
+head(dados$sexo, 20)
+
+# vamos usar a função ifelse para substituir 1 por "feminino" e 2 para "masculino"
+dados$sexo <- ifelse(dados$sexo == 1, "feminino", "masculino")
+
+# visualizar novamente as 20 linhas
+head(dados$sexo, 20)
+
+# estrutura dos dados
+str(dados)
+
+# Vamos transformar a variável sexo para factor (qualitativa) 
+dados$sexo <- as.factor(dados$sexo)
+
+str(dados)
+```
+
+Feito isso, vamos alterar a variável `estado_civil`. Essa variável apresenta mais de 2 categorias. Teremos que utilizar a função `ifelse()` de forma aninhada.
+
+Os estados civis da base são:
+
+* 1 - solteir
+* 2 - casad
+* 3 - viuv
+* 4 - separad_judicialmente
+* 5 - divorciad
+* 6 - uniao_estavel
+* outros
+
+Podemos usar a função `unique()` para saber quais são os valores únicos de um vetor. 
+
+```{r}
+# Visualizar a variável estado_civil
+head(dados$estado_civil, 20)
+
+# podemos usar a função unique()
+unique(dados$estado_civil)
+
+# Vamos transformar a variável estado civil para factor
+dados$estado_civil <- ifelse(dados$estado_civil == 1, "solteir", 
+                     ifelse(dados$estado_civil == 2, "casad", 
+                     ifelse(dados$estado_civil == 3, "viuv",
+                     ifelse(dados$estado_civil == 4, "separad_judicialmente", 
+                     ifelse(dados$estado_civil == 5, "divorciad", 
+                     ifelse(dados$estado_civil == 6, "uniao_estavel", "outros"))))))
+
+# visualizar os dados alterados
+head(dados$estado_civil, 20)
+```
+
+Ok! Precisamos transformar para o formato `factor`.
+
+```{r}
+# Transformando a variável estado civil para factor
+dados$estado_civil <- as.factor(dados$estado_civil)
+
+# estrutura 
+str(dados)
+```
+
+A variável no formato factor ajuda quando você desejar empregar funções estatísticas. Veja o exemplo de `table()` que retorna uma tabela com a quantidade de obs. para cada categoria. 
+
+```{r}
+# table
+table(dados$estado_civil)
+```
+
+#### Trabalhando com valores no formato de data
+
+Precisamos tranformar `DataNascimento` e `DataIngresso` para um formato que o `R` entenda como datas. 
+
+Isso servirá para a idade atual dos participantes desse plano previdenciário. 
+
+Para tanto, vamos dizer ao `R` para criar uma variável com a data de hoje. Em seguida, iremos calcular a diferença, em anos, entre a data de hoje e a data de nascimento de cada participante do plano, transformando a variável `idade` para o tipo inteiro.
+
+O R possui a função `Sys.Date()` de retorna a data atual do sistema. 
+
+O formato padrão de data do R é "AAAA-MM-DD". Os nossos dados estão no formato "DD/MM/AAAA". Vamos usar a função `as.Date(dados, format = "%d/%m/%Y")` para transformar as variáveis data_nascimento e data_ingresso em datas. O parâmetro `format` serve para dizer ao R qual é o formato dos nossos dados. `%d` representa dias, `%m` meses, `%Y` anos no modelo `AAAA`. 
+
+```{r}
+# Datas de referência no R e data de hoje
+data_hoje <- Sys.Date()
+data_hoje
+
+# Ajustando a data de ingresso e de nascimento
+dados$data_nascimento <- as.Date(dados$data_nascimento, format = "%d/%m/%Y")
+
+dados$data_ingresso <- as.Date(dados$data_ingresso, format = "%d/%m/%Y")
+
+# visualizar a estrtutura
+str(dados)
+```
+
+Agora podemos calcular a idade dos participantes do plano. Vamos criar uma variável chamada `idade` e salvaremos no data frame `dados`. Transformaremos no formato numérico. 
+
+Para calcular a idade hoje, basta subtrair a data de hoje pela data de nascimento e dividir por 365.
+
+```{r}
+# criando a variável idade
+dados$idade <- as.numeric((data_hoje - dados$data_nascimento) / 365)
+
+# mostrando 20 valores
+head(dados$idade, 20)
+```
+
+Se você desejar arredondar os valores para 0 casas decimais, basta usar a função `round(idade, 0)`:
+
+```{r}
+# arredondando
+dados$idade <- round(dados$idade, 0)
+
+head(dados$idade, 20)
+```
+
+Agora é sua vez, calcule o tempo de contribuição, em anos, para cada participante e salve como uma variável da sua base com o nome `tempo_servico`. Após, mostre a estrutura dos dados e as 10 primeiras linhas da base.
+
+```{r}
+##### Exercício: Calcule a quantidade de tempo de serviço passado para os participantes
+
+```
+
+Até agora foi moleza, certo? Crie uma variável, chamada `base_calculo_anual` que represente o salário de contribuição anual dos participantes do plano e a adicione à base, considerando que todos recebem o 13º salário.
+
+
+```{r}
+##### Exercício: Crie uma coluna (variável) representando a Base de Cálculo Anual considerando o 13º salário
+
+```
+
+Finalizaremos o procedimento de *data wrangling* (processamento de dados), exportando, por meio da função `saveRDS`, a base estruturada para um arquivo com extensão `.rds` com o nome "dados_pens.rds" e as colunas na ordem a seguir:
+
+* id
+* sexo
+* idade
+* estado_civil
+* qtd_dependentes
+* carreira_atual
+* tempo_servico
+* base_calculo_anual 
+
+```{r}
+# Vamos salvar essa base final 
+
+```
+
