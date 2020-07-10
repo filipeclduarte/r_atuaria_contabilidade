@@ -1,0 +1,106 @@
+---
+title: "Aula 5 - Extra"
+output: html_notebook
+---
+
+## Importar base
+
+```{r}
+dados_pens <- readRDS("dados_pens.rds")
+```
+
+
+Funções úteis 
+- Verificar se existe uma pasta (diretório)
+
+```{r}
+file.exists("Downloads") # verifique uma pasta no seu diretório
+```
+- Se não existir, crie uma pasta para salvar os dados
+
+```{r}
+if(!file.exists("dados")){
+  dir.create("dados")
+}
+
+file.exists("dados")
+```
+
+- Verificar os arquivos da pasta (diretório)
+
+```{r}
+list.files() # é possível colocar um endereço de uma pasta específica
+```
+
+- Se você quiser verificar um diretório específico - precisa colocar o endereço
+
+### Manipulação de dados 
+
+- Vamos voltar para a base trabalhada na aula 5
+
+```{r}
+dados_pens 
+```
+
+- Filtro de linha
+```{r}
+dados_pens[55:100,]
+
+dados_pens[dados$sexo == "masculino", ]
+dados_pens[dados$qtd_dependentes >= 2, ]
+
+dados_pens[(dados$sexo == "masculino") & (dados$qtd_dependentes >= 2), ]
+
+dados_pens[(dados$sexo == "masculino") | (dados$qtd_dependentes >= 2), ]
+```
+
+- Filtro de coluna 
+
+```{r}
+dados_pens[, 1:2]
+
+dados_pens[, c(1, 6, 7)]
+
+dados_pens[, "carreira_atual"]
+dados_pens$carreira_atual
+
+dados_pens[, c("carreira_atual", "base_calculo_anual")]
+
+dados_pens[, -c(1, 5)]
+
+subset(dados_pens, sexo == 'feminino', 'idade')
+```
+
+- Filtro linha e coluna
+
+```{r}
+dados_pens[dados_pens$sexo == 'feminino', c('sexo', 'idade', 'carreira_atual')]
+
+dados_pens[(dados_pens$sexo == 'feminino') & (dados_pens$idade >= 50), c('sexo', 'idade', 'carreira_atual')]
+
+```
+
+
+- Filtro com operadores lógicos 
+
+- Sort (ordenar)
+
+```{r}
+sort(dados_pens$tempo_servico)
+sort(dados$base_calculo_mensal)
+
+sort(dados$base_calculo_mensal, decreasing = TRUE) # descrescente
+
+```
+
+
+- Ordenar o data frame por uma coluna
+```{r}
+dados_pens[order(dados$base_calculo_mensal, decreasing = TRUE), ]
+
+# Ordenar o data frame por mais de uma coluna
+dados_pens[order(dados$base_calculo_mensal, dados$tempo_servico), ]
+```
+
+
+
