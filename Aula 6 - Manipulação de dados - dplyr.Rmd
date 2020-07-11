@@ -1,0 +1,239 @@
+---
+title: "Aula 6 - Manipulação de dados - dplyr"
+output: html_notebook
+---
+
+## Conteúdo da aula 
+
+- Operador pipe `%>%`
+- Pacote "dplyr" para manipulação de dados
+  - filter()
+  - select()
+  - mutate()
+  - arrange()
+
+
+### Importação dos dados
+
+Para esta aula, vamos utilizar a base **dados_pens.rds** que está disponível no repositório do github. Ela foi trabalhada na aula n. 5. 
+
+```{r}
+# importando a base de dados
+dados <- readRDS('dados_pens.rds') 
+
+# visualizar a estrutura
+str(dados)
+```
+Veja que o dataframe contém 749 observações e 8 variáveis descritas a seguir:
+
+* id
+* sexo
+* idade
+* estado_civil
+* qtd_dependentes
+* carreira_atual
+* tempo_servico
+* base_calculo_anual
+
+#### Instalação e carregamento do pacote `dplyr`
+
+Se você já instalou os pacotes `dplyr` e `magrittr`, pode pular o bloco de código abaixo e passe para a etapa de carregamento. 
+
+```{r}
+# install.packages("dplyr")
+# install.packages("magrittr") # operador pipe
+```
+
+
+#### Carregamento dos pacotes
+
+Carregue os pacotes:
+```{r}
+library(dplyr)
+library(magrittr)
+```
+
+
+A partir de agora, podemos iniciar o conteúdo da aula de hoje. 
+
+## Introdução 
+
+Aula dedicada à manipulação de dados com o pacote **dplyr**. Esse pacote foca em alguns verbos:
+
+* filter() - seleciona as observações (linhas) a partir de condições
+* select() - seleciona as variáveis (colunas) a partir dos nomes
+* mutate() - cria novas variáveis a partir das existentes
+* summarise() - reduz os múltiplos valores em um summary*
+* arrange() - reordena os dados a partir de variáveis 
+* group_by() - agrupa as observações por variáveis*
+
+Os verbos **summarise()** e **group_by()** serão apresentados no encontro síncrono (aula 6 - extra). 
+
+Para que você consiga extrair o máximo desse pacote, é importante que aprenda a trabalhar com o operador pipe `%>%` que serve para você ler o código de uma maneira mais expressiva. Esse operador funciona da seguinte forma:
+
+- Digamos que eu desejo aplicar a função `select()` ao dataframe `dados` para extrair a coluna `sexo`. No modelo tradicional, utilizaria o comando: `select(dados, sexo)`. Quando utilizo o pipe (`%>%`), eu seleciono inicialmente o dataframe e, em seguida, peço a função a ser aplicada: `dados %>% select(sexo)`. Dessa maneira, esse código pode ser lido de uma maneira mais intuitiva: "Pegue o dataframe `dados` e selecione a coluna `sexo`. 
+
+
+```{r}
+# tradicional
+select(dados, sexo)
+
+# com o operador pipe
+dados %>% 
+  select(sexo)
+```
+
+Agora fica a seu critério a escolha do modelo: tradicional ou com o operador `pipe`. Lembre-se que quando você precisar realizar diversas operações, o modelo tradicional apresentará um código de difícil leitura, haja vista você possuirá diversas funções de forma aninhada. 
+
+#### `filter()`- Filtro de linhas com condições
+
+Vamos iniciar com a função `filter()` que faz o papel de filtrar as linhas a partir de condições. 
+Você pode incluir a coluna diretamente, sem necesidade de utilizar no modelo do R base (`dados$var`). Isto é, a função `filter()` é capaz de entender o nome das colunas. 
+
+Digamos que eu deseje selecionar as pessoas com estado civil "casad":
+
+```{r}
+dados %>% 
+  filter(estado_civil == "casad")
+```
+
+Veja que eu não preciso colocar as aspas `""` no nome das colunas. 
+
+A função `filter()` pode receber mais de uma condição. Digamos que você deseja selecionar as pessoas casadas e solteiras (lembre-se de utilizar o operador "ou" - `|`:
+
+```{r}
+dados %>% 
+  filter(estado_civil == "casad" |  estado_civil == "solteir")
+```
+
+É possível apresentar condições para diversas variáveis, separando-as por vírgulas. 
+
+Selecione as pessoas do sexo **feminino** que são **casadas**
+
+```{r}
+dados %>% 
+  filter(sexo == "feminino", 
+         estado_civil == "casad")
+```
+
+Agora é sua vez: Mostre as pessoas do sexo masculino com mais de 50 anos, casados ou solteiros e com 2 dependentes ou mais.
+
+```{r}
+# Exercício 1:
+
+```
+
+#### `select()`- Filtro de colunas (variáveis)
+
+A função `select()` recebe os nomes das colunas do dataframe. Para selecionar mais de uma coluna, basta separá-las por vírgulas. 
+
+Vamos selecionar duas colunas: idade e tempo_servico:
+
+```{r}
+dados %>% 
+  select(idade, tempo_servico)
+```
+
+É possível utilizar o `-` antes do nome da coluna para mostrar o dataframe sem a coluna. É possível fazer o mesmo para mais de uma coluna.
+
+Digamos que desejo visualizar meu dataframe sem a coluna `id`:
+```{r}
+dados %>% 
+  select(-id)
+```
+
+Para mais de uma coluna (quero remover `id` e `sexo`):
+
+```{r}
+dados %>% 
+  select(-id, -sexo)
+```
+
+É possível combinar o filtro de linha e coluna, basta seguir a lógica de realizar o filtro de linha e, em seguida, declarar o filtro de coluna.
+
+Digamos que desejo filtar as pessoas com mais de 50 anos que estão solteiras e, em seguida, quero mostrar as colunas sexo, idade, estado_civil e carreira_atual:
+
+```{r}
+dados %>% 
+  filter(idade > 50, 
+         estado_civil == "solteir") %>% 
+  select(sexo, idade, estado_civil, carreira_atual)
+```
+
+Lembre-se de utilizar o operador pipe (`%>%`) entre as funções. 
+
+Sua vez: Faça um filtro dos indivíduos com 60 anos ou mais, em união estável com menos de 20 anos de tempo de serviço. Em seguida, mostre o sexo, idade, carreira_atual, tempo_servico e base_calculo_mensal. 
+
+```{r}
+# Exercício 3:
+
+```
+
+
+#### `mutate()`- criar variáveis
+
+A função auxilia no processo de criação de novas variáveis. Você indicará o nome da variável e sua fórmula. 
+
+Digamos que desejo calcular a base de cálculo mensal. Esta é computada como $\frac{base\_calculo\_anual}{13}$.
+
+```{r}
+dados %>% 
+  mutate(base_calculo_mensal = base_calculo_anual/13)
+```
+
+Digamos agora que desejo mostrar apenas carreira_atual, base_calculo_anual e base_calculo_mensal:
+
+```{r}
+dados %>% 
+  mutate(base_calculo_mensal = base_calculo_anual/13) %>% 
+  select(carreira_atual, base_calculo_anual, base_calculo_mensal)
+```
+
+Lembre-se que você pode combinar as funções. Além disso, é possível criar mais de uma variável, basta separá-las por vírgulas, do mesmo modo como você faz na função `select()` para mostrar as variáveis. 
+
+Sua vez: Filtre os solteiros com idades entre 30 e 50 anos (intervalo fechado), crie uma coluna chamada base_calculo_mensal e mostre o sexo, idade, carreira_atual e base_calculo_mensal:
+
+```{r}
+# Exercício 3:
+
+```
+
+
+#### `arrange()` - função que ordena o dataframe
+
+A função `arrange()` serve para ordenar o dataframe a partir de uma ou mais variáveis. 
+
+Digamos que desejo realizar uma ordenação crescente dos dados. 
+
+```{r}
+dados %>% 
+  arrange(base_calculo_anual)
+```
+
+Se desejares ordenar por mais de uma coluna, separe-as por vírgulas, por ordem de importância. 
+
+Quero ordenar primeiro pela base_calculo_anual e, em seguida, pela idade:
+
+```{r}
+dados %>% 
+  arrange(base_calculo_anual, idade)
+```
+
+Para realizar a ordenação de forma descrescente, utilize a função `desc()` na variável desejada.
+
+Digamos que desejo realizar a ordenação da variável idade de forma descrescente:
+
+```{r}
+dados %>% 
+  arrange(desc(idade))
+```
+
+É possível combinar ordenação crescente e descrescente. 
+
+Sua vez: Filtre os indivíduos com menos de 65 anos, solteiros ou divorciados. Em seguida, crie a variável base_calculo_mensal, faça a ordenação de forma descrescente pela idade e de forma crescente pelo tempo_servico. Por fim, mostre todas as variáveis exceto à coluna `id`.
+
+```{r}
+# Exercício 4:
+
+```
+
