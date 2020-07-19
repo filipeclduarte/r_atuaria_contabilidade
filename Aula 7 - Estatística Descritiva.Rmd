@@ -50,7 +50,7 @@ arquivos_nomes <- paste0(dem, "_cia_aberta_con_", anos,".csv")
 
 # Funcao processo de leitura
 funcao_leitura_zip <- function(dest, arq){
-  read.csv2(unz(dest, arq))
+  read.csv2(unz(dest, arq), encoding = "latin1")
 }
   
 dados <- mapply(funcao_leitura_zip, destino, arquivos_nomes)
@@ -70,7 +70,7 @@ dfp_con <- function(dfps_id, ano_inicial, ano_final){
   arquivos_nomes <- paste0(dem, "_cia_aberta_con_", anos,".csv")
   # Funcao processo de leitura
   funcao_leitura_zip <- function(dest, arq){
-    read.csv2(unz(dest, arq))} 
+    read.csv2(unz(dest, arq), encoding = "latin1")} 
   dados <<- mapply(funcao_leitura_zip, destino, arquivos_nomes)
   }
 
@@ -372,7 +372,7 @@ destats <- function(x){
 ### vamos usar a função by(df[, quant_vars], var_grupo, funcao) para calcular estatisticas() por grupos
 estatisticas_ano <- by(df_wide[,vars_quant], df_wide$DT_FIM_EXERC, destats)
 
-estatisticas_ano
+estatisticas
 ```
 
 Por fim veremos como calcular uma matriz de correlação. Para tanto, utilizaremos a função `cor`, a qual também calcula correlações entre duas variáveis. 
