@@ -1,0 +1,133 @@
+---
+title: "Aula 7 - Extra"
+output: html_notebook
+---
+
+Conteúdo 
+
+- Ler tabelas de dados da web (html)
+- Estruturar os dados
+- Ler scripts em .R com funções
+- Realizar estatísticas descritivas em dados de Expectativa de vida. 
+
+```{r}
+# fazendo a leitura do script estatisticas.R
+source("estatisticas.R")
+```
+
+
+Instalação e carregamento de pacotes
+```{r}
+#install.packages("rvest")
+#install.packages("tidyverse")
+library(rvest)
+library(tidyverse)
+```
+
+Fazer a leitura da url com a função `read_html`
+```{r}
+url <- "https://en.wikipedia.org/wiki/List_of_countries_by_past_life_expectancy"
+
+h <- read_html(url)
+
+h
+```
+
+Salvar as tabelas com a função `html_nodes("table")`
+```{r}
+tabelas <- h %>% 
+  html_nodes("table")
+
+```
+
+Verificar a estrutura da tabela
+```{r}
+expec_df <- tabelas[[3]] %>% 
+  html_table
+
+str(expec_df)
+
+expec_df
+```
+
+Transformar a tabela no formato tidy long
+```{r}
+# vamos renomear a coluna dos países
+df <- expec_df %>% 
+  rename(country = `Country ordependent territory`) %>% 
+  pivot_longer(-country, names_to = "periodo", values_to ="expectativa_vida") %>% 
+  na.omit()
+
+str(df)
+```
+
+Vamos visualizar os países com as maiores expectativas de vida
+```{r}
+df %>% 
+  arrange(desc(expectativa_vida))
+```
+
+Vamos visualizar os países com as menores expectativas de vida
+```{r}
+df %>% 
+  arrange(expectativa_vida)
+```
+
+Vamos visualizar apenas o Brasil
+```{r}
+df %>% 
+  filter(country == "Brazil")
+```
+
+Vamos agrupar por período e visualizar as maiores e as menores expectativas de vida
+```{r}
+df %>% 
+  group_by(periodo) %>% 
+  top_n(5)
+```
+
+Vamos calcular as estatísticas agrupadas por período
+```{r}
+cv <- function(x){
+  sd(x)/mean(x)
+}
+df %>% 
+  group_by(periodo) %>% 
+  summarise(n = n(),
+            media = mean(expectativa_vida), 
+            desvio_padrao = sd(expectativa_vida),
+            cv = cv(expectativa_vida))
+
+str(df)
+
+df %>% 
+  group_by(periodo) %>% 
+  arrange(desc(periodo), expectativa_vida)
+
+df$periodo[2626]
+
+df %>% 
+  filter(periodo == "2010-2015")
+
+df %>% 
+  filter(periodo == "2010–2015") %>% 
+  arrange(expectativa_vida)
+```
+
+Vamos utilizar a função estatisticas que estará salva em um script com extensão ".R" no diretório de trabalho
+```{r}
+# fazer a importação das funções contidas em um script .R
+source("estatisticas.R")
+
+df %>% 
+  group_by(periodo) %>% 
+  summarise(estatisticas(expectativa_vida))
+
+by(df[,"expectativa_vida"], df$periodo, apply_estatisticas)
+
+```
+
+
+
+
+
