@@ -22,10 +22,11 @@ Vamos fazer download dos demonstrativos financeiros das companhias abertas.
 
 Criar os nomes dos arquivos
 ```{r}
-# A quantidade de anos
-anos <- rep(2017:2019, each = 3)
+# demonstrativos
 dfp_id <- c("BPP", "BPA", "DRE")
 dem <- c("bpp", "bpa", "dre")
+# A quantidade de anos
+anos <- rep(2017:2019, each = length(dfp_id))
 
 urls <- paste0("http://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/", dfp_id, "/DADOS/", dem, "_cia_aberta_",anos, ".zip")
 
@@ -59,8 +60,8 @@ Resumindo tudo isso na função `dfp_con` abaixo:
 ```{r}
 dfp_con <- function(dfps_id, ano_inicial, ano_final){
   dem <-tolower(dfps_id) # transformar em lower case
-  dfps_id <- toupper(dfps_id) 
-  anos <- rep(ano_inicial:ano_final, each = (ano_final - ano_inicial + 1))
+  dfps_id <- toupper(dfps_id) # transformar em Upper case
+  anos <- rep(ano_inicial:ano_final, each = length(dfps_id))
   urls <- paste0("http://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/DFP/", dfps_id, "/DADOS/", dem, "_cia_aberta_",anos, ".zip")
   destino <- paste0(dem, "_cia_aberta_", anos, ".zip")
   funcao_download <- function(u, d){
@@ -75,7 +76,7 @@ dfp_con <- function(dfps_id, ano_inicial, ano_final){
   }
 
 # Chamar a função que já faz o processo de download
-dfp_con(dfps_id = c("bpp", "bpa", "dre"), ano_inicial = 2017, ano_final = 2019)
+dfp_con(dfps_id = c("bpp", "bpa", "dre"), ano_inicial = 2015, ano_final = 2019)
 ```
 
 Detalhe para a atribuição aos dados `<<-` em dados. Nesse caso ele vai criar um objeto de mesmo nome no seu ambiente global. 
