@@ -1,0 +1,344 @@
+---
+title: "Aula 8 - Visualizações de dados com ggplot2"
+output: html_notebook
+---
+
+Nesta aula aprenderemos como criar gráficos univariados a partir do pacote `ggplot2`.
+
+Conteúdo da aula:
+
+- Gráfico de barras
+- Histograma
+- Box-plot
+
+Antes de criar os gráficos, precisamos instalar e carregar o pacote `ggplot2`. Além disso, carregaremos o pacote `dplyr`. 
+
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+library(dplyr)
+library(magrittr) 
+
+```
+
+Para iniciar nosso estudo, vamos importar a base `dados_pens.rds`, a qual foi utilizada em aulas passadas. 
+
+Para relembrar: Essa base de dados diz respeito às informações de participantes de um plano de previdência. Ela contém informações sobre o sexo, idade, estado civil, quantidade de depentendes, carreira, tempo de serviço e a base de cálculo anual. 
+
+```{r}
+# importando a base de dados
+df <- readRDS("dados_pens.rds")
+
+# visualizar as 6 primeiras obs.
+df %>% 
+  head()
+```
+
+Vamos visualizar a estrutura dessa base:
+
+```{r}
+df %>% str()
+
+df %>% 
+  glimpse()
+```
+
+Antes de iniciar as visualizações, vamos aprender uma função do pacote `dplyr` chamada `case_when`, a qual pode ser empregada quando se deseja criar diversas categorias a partir de dados quantitativos. Como você criará variáveis a partir de variáveis do seu dataframe, utilize-a dentro da função `mutate`. 
+
+Por exemplo, digamos que desejamos criar uma variável para representar grupos de faixas etárias de 10 anos. Do tipo: 20-29, 30-39, 40-49, 50-59, 60-69, 70-79, 80-89. Nesse caso chamaremos a função `case_when` a qual recebe um filtro que poderia ser `idade >=20 & idade <=29`, seguido de `~` e a consequente categoria entre aspas `'20-29'`. Então, utilize a vírgula `,` para identificar outra categoria. Vejamos abaixo:
+
+```{r}
+df <- df %>% 
+  mutate(faixa_etaria = case_when(idade >= 20 & idade <= 29 ~ "20-29",
+                                  idade >= 30 & idade <= 39 ~ "30-39",
+                                  idade >= 40 & idade <= 49 ~ "40-49",
+                                  idade >= 50 & idade <= 59 ~ "50-59",
+                                  idade >= 60 & idade <= 69 ~ "60-69",
+                                  idade >= 70 & idade <= 79 ~ "70-79"))
+
+df %>% 
+  glimpse()
+```
+
+
+Tendo a base de dados importada, vamos salvá-la no arquivo chamado `dados_pens_viz.rds` para trabalhar na próxima aula com as faixas etárias. 
+
+```{r}
+df %>% 
+  saveRDS("dados_pens_viz.rds")
+```
+
+Agora explicarei como funciona o pacote `ggplot2`. 
+
+O `ggplot2` utiliza a gramática de gráficos, conceito desenvolvido por Leland Wilkinson. Esse pacote possui um conjunto de ferramentas que permite a criação de gráficos que capture  relações complexas.
+
+Dessa forma, é uma biblioteca muito flexível. A gramática de gráficos é sistematizada da seguinte forma:
+
+1- você inicializa a função `ggplot()` com os dados e pode adicionar diversos elementos de forma encadeada, por exemplo: 
+
+`p <- ggplot(data = df, aes(x = idade, y = base_calculo_anual))`
+
+2 - Essa funcão cria um espaço para você adicionar alguma estrutura estética. 
+
+3 - Se eu quiser adicionar outro elemento, como pontos entre essas variáveis, devemos adicioná-los à p (objeto salvo anteriormente):
+
+`p + geom_point()` 
+
+Veja que esse comando pode ser escrito sem o objeto `p`, como pode-se verificar a seguir:
+
+`ggplot(data = df, aes(x = idade, y = base_calculo_anual)) + geom_point()`
+
+Ai surge a pergunta: É possível modificá-lo? Sim, podemos adicionar um título e alterar o texto dos eixos por meio da função `labs`:
+
+`ggplot(data = df, aes(x = idade, y = base_calculo_anual)) + geom_point() + labs(title = "Gráfico de dispersão", x = "Idade", y = "Base de cálculo anual")`
+
+Vamos visualizar as distribuições das variáveis. Antes de começar a criar os gráficos, deixo claro que todo o processo de criação dependerá do tipo da variável, se ela é qualitativa ou quantitativa. 
+
+Se ela for qualitativa, vamos usar o gráfico de barras. 
+
+#### 1. Gráfico de barras
+
+O gráfico de barras é simples e intuitivo visualmente. Normalmente, esse tipo de gráfico apresenta as barras verticalmente com a quantidade de elementos em cada classe sendo representada pela altura da caixa. 
+
+```{r}
+# Vamos visualizar um gráfico de barras para o sexo
+ggplot(data = df, mapping = aes(x = sexo)) + 
+  geom_bar()
+```
+
+Agora sua vez de praticar:
+
+```{r}
+#### Exercício: Faça um gráfico de barras para as faixas etárias
+
+```
+
+
+Esse gráfico de barras é simples, vamos incrementar alguns artifícios visuais como cores. Para tanto, é necessário que você adicione o argumento `fill` à função de aesthetic (`aes()`) da `ggplot()`. Vamos preencher com cores a variável `sexo`.
+
+```{r}
+# decidi por salvar o código do ggplot() à variável "p"
+p <- ggplot(df, aes(x = sexo, fill = sexo)) + geom_bar()
+
+# visualizar
+p
+```
+
+Perceba que foi criada uma legenda para as identificar as cores. Neste caso específico, não seria nem necessário haja vista a presença da identificação da classe no eixo x.
+
+Sua vez: Faça o gráfico de barras para a faixa etárias por sexo, colocando a variável faixa_etaria no eixo y.
+
+```{r}
+### Exercício: 
+
+```
+
+Aprendido como se cria as cores, vamos agora visualizar o mesmo gráfico acima sem a legenda das cores, pois sabemos que ela é descenessária e ocupa espaço. Para retirar a legenda, adicione `guides(fill = FALSE)` à p: 
+
+```{r}
+# Se você deseja saber a quantidade de pessoas para cada sexo, use a função table()
+table(df$sexo)
+# gráfico sem legenda
+p <- p + guides(fill = FALSE)
+```
+
+Se eu desejar construir o gráfico acima com a quantidade de pessoas explicitamente acima da barra, apenas devo adicionar ao comando salvo em `p` a função `geom_text()` com a especificação estatística de quantidade `count`, a `aes(label = ..count..)` e o parâmetro de localização `vjust`.
+
+Vejamos abaixo como proceder:
+
+```{r}
+p + geom_text(stat = "count", aes(label = ..count..), vjust = 0)
+```
+
+O argumento `vjust=0` faz com que a quantidade de pessoas se posicione muito próximo da barra. Isso pode tornar a leitura um pouco prejudicada quando você elabora um gráfico de barras com diversas classes. Para ajustar esse problema, podemos ajustar manualmente para valores negativos:
+
+```{r}
+# ajustando para negativo, os valores se distanciam do eixo x
+p + geom_text(stat = "count", aes(label = ..count..), vjust = -1)
+```
+
+Tanto o ajuste com -1 como com -2 ficaram ruins, então vou colocar -0.5 para melhorar. Além disso, posso adicionar um contorno preto às barras para delinear melhor os limites das barras. Para tanto, adiciono o argumento `colour=black` à função `geom_bar()`. Mostro abaixo todo o código:
+
+```{r}
+# adicionando um contorno preto
+ggplot(df, aes(x = sexo, fill = sexo)) + 
+  geom_bar(colour = "black") +
+  geom_text(stat = "count", aes(label = ..count..), vjust = -0.5) + 
+  guides(fill = FALSE)
+```
+  
+Agora é sua vez de praticar. Como exercício, peço que faça o gráfico de barras para o estado civil, seguindo o mesmo passo a passo realizado na construção do gráfico de barras para o sexo. Utilize-se dos blocos de código abaixo:
+
+```{r}
+## Exercício 1: Faça o gráfico de barras para o estado civil em escala cinza
+
+```
+
+```{r}
+## Ex. 1.1: Adicione cores
+
+```
+
+```{r}
+## Ex. 1.2: Remova a legenda das cores
+
+```
+
+```{r}
+## Ex. 1.3: Adicione a quantidade acima da barra
+
+```
+
+```{r}
+## Ex. 1.4: Adicone o contorno preto às barras
+
+```
+
+
+E se eu quiser que a ordenação seja de forma crescente? basta colocar `n` ao invés de `-n` que é a função do `dplyr` que conta a quantidade de elementos. 
+
+Vamos repetir o gráfico acima, porém ordenando de forma **crescente** e **sem legendas**.
+
+```{r}
+
+```
+
+Vamos fazer um gráfico de barras para a carreira e verificaremos qual delas possui a maior quantidade de pessoas.
+
+```{r}
+
+```
+
+Esse gráfico não ficou legal, pois temos muitas carreiras. O ideal é que você selecione algumas e tente reproduzir o gráfico de barras colorido. 
+
+Faremos a seleção de pelo menos 5 profissões e criaremos um gráfico de barras colorido com a quantidade de pessoas acima da barra contornada de preto e ordenada de forma decrescente. (dica: criar uma tabela adicional só com as profissões desejadas)
+
+```{r}
+
+```
+
+O gráfico ficou legal, entretanto falta alterar o rótulo dos eixos e adicionar um título ao gráfico. Isso é intuitivo, basta adicionar `xlab("texto")` e `ylab("texto")` ao `ggplot()`, substituindo os rótulos onde está "texto", para os eixos x e y, respectivamente. Para adicionar um título, utilize a função `ggtitle("texto")`, substituindo o nóme do gráfico onde está "texto". 
+
+Agora, faremos um gráfico de barras semelhante ao anterior com os rótulos "Profissão" e "Quantidade", para x e y, respectivamente. Ainda, adicione o título "Gráfico de Barras para Profissão".
+
+```{r}
+
+```
+
+#### 2. Histograma
+
+O primeiro gráfico para trabalhar com variáveis quantitativas será o Histograma, que representa a distribuição dos dados, e é um método de estimação de distribuição não-paramétrico.
+
+Ele descreve o comportamento dos dados, do ponto de vista de sua distribuição. 
+
+O `ggplot2` possui uma função para construir o histograma, que se chama `geom_histogram()`. 
+
+Vamos visualizar o histograma da variável idade:
+
+```{r}
+df %>% 
+  ggplot(aes(idade))+
+  geom_histogram()
+```
+
+Perceba que nos é dada a informação de que o histograma utilizou a quantidade de **intervalos (bins)** igual a **30**. Podemos alterar esse parâmetro e modificar o gráfico. 
+
+Vamos fazer o mesmo gráfico acima com a identificação da quantidade de intervalos. 
+
+```{r}
+df %>% 
+  ggplot(aes(idade)) + 
+  geom_histogram(bins = 30)
+```
+
+Se eu diminuir a quantidade de intervalos, perceba que o gráfico ficará **menos ruidoso** e **concentrará mais informação** em cada retângulo. Abaixo, vamos utilizar `bins = 10`:
+
+```{r}
+df %>% 
+  ggplot(aes(idade))+
+  geom_histogram(bins = 10)
+```
+Sua vez de praticar:
+
+Faça três histogramas para a variável idade, com as quantidade de intervalos sendo 15, 40 e 50.
+
+```{r}
+#### Ex.: 2.1 
+
+```
+
+Qual desses gráficos você acha que ficou melhor? 
+
+Bem, certo de que você aprendeu a plotar um histograma, vamos adicionar mais complexidade. 
+
+Agora, ao invés de plotar apenas um histograma, vamos criar dois histogramas para a idade, sendo um para cada sexo. Utilizaremos o argumento `fill` para preencher a área com a cor e o `alpha` (entre 0 e 1) para tornar mais transparente
+
+```{r}
+df %>% 
+  ggplot(aes(x=idade,fill=sexo, alpha = 0.7))+
+  geom_histogram(bins = 20)
+```
+
+Perceba que o gráfico não ficou legal. Para melhorar essa visualização, teste a função `geom_histogram(position = "identity")`. Isso fará com que a distribuição do sexo masculino não fique sobreposta. 
+
+```{r}
+df %>% 
+  ggplot(aes(x=idade,fill=sexo, alpha = 0.7))+
+  geom_histogram(bins = 20, position = "identity")
+```
+
+
+```{r}
+#### Ex.: 2.2
+
+```
+
+Ainda, crie um histograma da base de cálculo anual para os estados civis solteiro e casado, usando a cor e transparência (alpha = 0.6) e diga se a distribuição é diferente entre as classes.
+
+```{r}
+#### Ex.: 2.3
+
+```
+
+#### 3. Box-plot
+
+Por fim, vamos visualizar o box-plot também chamado de diagrama de caixa. 
+Ele representa a distribuição dos quartis, mínimo e máximo com base em 3 desvios-padrões. 
+
+A função para plotar o box plot é `geom_boxplot()`. A seguir, mostro como plotar um boxplot da base de cálculo anual
+
+```{r}
+df %>% 
+  ggplot(aes(base_calculo_anual))+
+  geom_boxplot()
+```
+
+O que podemos concluir desse boxplot? A distribuição da base de cálculo é muito assimétrica à direita, pois a mediana está muito próxima do 1º Quartil. Além disso, verificamos alguns outliers dispostos à direita.  
+
+Agora, façamos o Box-plot base por sexo:
+
+```{r}
+df %>% 
+  ggplot(aes(x = base_calculo_anual, fill = sexo))+
+  geom_boxplot()
+```
+
+Note as diferenças da base de cálculo anual para os sexos. Verifique também que há outliers principalmente para o sexo masculino. 
+
+Agora é sua vez, Plote o Box-plot da base de cálculo anual por estado civil:
+
+```{r}
+#### Ex.: 3.1 
+
+```
+
+Há diferenças da base para os estados civis? Nesse sentido, haveria necessidade de realizar algum teste estatístico para confirmar esse pensamento. 
+
+Para finalizar, faça o exercício a seguir:
+
+Elabore um boxplot da base_calculo_anual segregada para sexo e estado_civil. Utilize fill e o eixo y para o sexo. 
+
+```{r}
+#### Exercício 3.2
+
+```
