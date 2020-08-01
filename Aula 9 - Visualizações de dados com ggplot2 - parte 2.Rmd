@@ -1,0 +1,171 @@
+---
+title: "Aula 9 - Visualizações de dados com ggplot2 - parte 2"
+output: html_notebook
+---
+
+Conteúdo:
+
+- pirâmide etária
+  - scale_y_continuous
+- facet_wrap
+- gráficos de dispersão
+  - geom_point
+- geom_smooth
+
+Vamos carregar os pacotes:
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(magrittr)
+```
+
+Importar a base de dados:
+```{r}
+df <- readRDS('dados_pens_viz.rds')
+
+df %>% 
+  str()
+```
+
+#### 1. Pirâmide etária
+
+Vamos aprender a criar uma pirâmide etária a partir dos dados da base de participantes do plano de previdência. 
+
+Utilizaremos duas camadas de `geom_bar()`. Uma para o sexo feminino e outra para o masculino multiplicada por -1. 
+
+```{r}
+# vamos verificar os limites do gráfico, isto é a quantidade de pessoas do sexo masculino e feminino por faixa etária
+df %>% 
+  group_by(faixa_etaria) %>% 
+  count(sexo) %>% 
+  arrange(desc(n))
+# 198 fem 40-49 anos 
+# 90 mas 40-49 anos
+
+df %>% 
+ggplot(aes(y=faixa_etaria,fill=sexo)) + 
+  geom_bar(data=filter(df,sexo=="feminino")) + 
+  geom_bar(data=filter(df,sexo=="masculino"), aes(x=..count..*(-1))) + # adicionar -1 para o sexo multiuplicado pela quantidade de masculino
+  scale_x_continuous(breaks=seq(-100,200,20), # entre -100 e 200 de 20 em 20
+                     labels=abs(seq(-100,200,20))) # label
+```
+#### 2. facet wrap 
+
+Cria um gráfico separado para cada grupo. Vejamos a seguir com o histograma desenvolvido na aula 8. 
+
+A função representa uma camada no gráfico ggplot. 
+Função: `facet_wrap(~variavel)`.
+
+Além disso, é possível detalhar a diagramação com `nrow` - quantas linhas de gráficos. 
+
+Faremos para sexo e depois para estado civil.
+```{r}
+# padrão
+df %>% 
+  ggplot(aes(x = idade, fill = sexo)) +
+  geom_histogram(bins = 15, alpha = 0.7) + 
+  facet_wrap(~sexo)# variável sexo
+
+df %>% 
+  ggplot(aes(x = idade, fill = sexo)) +
+  geom_histogram(bins = 15, alpha = 0.7) + 
+  facet_wrap(~sexo, nrow = 2) # 2 linhas
+
+
+```
+
+Veja que nesse caso o facet_wrap padrão ficou melhor. 
+
+Vamos criar o histograma cada estado civil:
+
+```{r}
+df %>% 
+  ggplot(aes(x = idade, fill = estado_civil)) +
+  geom_histogram(bins = 15, alpha = 0.7) +
+  facet_wrap(~estado_civil)# variável
+```
+
+Agora é sua vez: Crie gráfico de densidade com a função `geom_density` criando grupos por sexo e faça o `facet_wrap` para os estados civis. Lembre-se de utilizar o `alpha`. 
+
+```{r}
+### Ex.1: 
+
+```
+
+#### 3. Gráfico de dispersão
+
+O gráfico de dispersão é uma representação de dados de duas ou mais dimensões. 
+
+A função que cria o gráfico é: `geom_point()`
+
+É importante detalhar os eixos `x` e `y`. 
+
+Elaboraremos um gráfico de dispersão entre da base de cálculo em função do tempo de serviço. 
+
+```{r}
+df %>% 
+  ggplot(aes(x = tempo_servico, y = base_calculo_anual))+
+  geom_point()
+```
+
+É possível adicionar cores aos pontos. Essas cores estarão relacionadas às variáveis categóricas. Use `color` com a variável categórica desejada. Vamos reproduzir o gráfico anterior com faixa etária. 
+
+```{r}
+df %>% 
+  ggplot(aes(x = tempo_servico, y = base_calculo_anual, color = faixa_etaria))+
+  geom_point()
+```
+
+Sua vez de praticar: Crie um gráfico de dispersão da idade (x) em relação à base de cálculo. 
+Em seguida, adicione cores para os estados civis. 
+
+```{r}
+### Ex.2: 
+
+```
+
+#### 4. geom_smooth (Curvas e retas)
+
+Agora vamos aprender a criar retas de regressões ou curvas de aproximação em um gráfico de dispersão. 
+
+A função é `geom_smooth` que por padrão produz uma curva aproximada. 
+Se desejares plotar uma reta de regressão, utilize `method=lm`. 
+
+Criaremos o gráfico da base de calculo em função do tempo de serviço, em seguida adicionaremos a reta de regressão:
+
+```{r}
+df %>% 
+  ggplot(aes(x = tempo_servico, y = base_calculo_anual))+
+  geom_point()+ 
+  geom_smooth(method = lm )
+```
+Essa reta apresenta a média na cor azul e as bandas do intervalo de confiança em cinza. 
+Adicionaremos cores para os estados civis.
+
+```{r}
+df %>% 
+  ggplot(aes(x = tempo_servico, y = base_calculo_anual, color = estado_civil))+
+  geom_point()+ 
+  geom_smooth(method = lm )
+```
+
+Veja que foram criadas as retas para cada grupo. Esse formato de gráfico ajuda a identificar se a variável categórica adicionada influencia na função projetada. 
+
+Por fim, veja a curva aproximada quando utilizamos a função `geom_smooth` padrão. 
+
+```{r}
+df %>% 
+  ggplot(aes(x = tempo_servico, y = base_calculo_anual, color = estado_civil))+
+  geom_point()+ 
+  geom_smooth()
+```
+
+Por fim, faça o exercício a seguir: Crie um gráfico de dispersão da idade (x) em relação à base de cálculo. Adicione cores para os estados civis e plote as retas de regressões com `geom_smooth`. 
+
+```{r}
+### Ex. 3: 
+```
+
+
+Fim da aula!
