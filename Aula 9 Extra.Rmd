@@ -1,0 +1,237 @@
+---
+title: "Aula 9 - Extra"
+output: html_notebook
+---
+### Conteúdo
+
+- 1. Importação de pacotes e dados financeiros
+- 2. Estruturação dos dados financeiros
+  - 2.1 Transformação em dados mensais
+  - 2.2 Cálculo de Retorno
+  - 2.3 Visualização das séries
+
+Referência básica deste minicurso é o livro do Regenstein Jr. intitulado **Reproducible Finance with R Code Flows and Shiny Apps for Portfolio Analysis**. 
+
+### 1. Importação de pacotes e dados financeiros
+
+Vamos iniciar pela instalação e importação dos pacotes. 
+
+```{r}
+#install.packages("tidyverse") 
+#install.packages("lubridate")
+#install.packages("highcharter") 
+#install.packages("timetk")
+#install.packages("quantmod") 
+#install.packages("PerformanceAnalytics") 
+#install.packages("scales")
+
+# carregamento
+library(tidyverse) # manipulação de dados
+library(lubridate) # trabalhar com datas
+library(highcharter) # gráficos
+library(timetk) # séries temporais
+library(quantmod) # importação de dados financeiros
+library(PerformanceAnalytics) 
+library(scales)
+
+```
+
+Agora podemos importar os dados financeiros. 
+
+A amostra que vamos trabalhar será composta por 3 títulos que negociam ações na B3, são eles:
+
+  1. **B3SA3**
+  4. **PETR4**
+  5. **VALE3**
+
+Faremos o download dos dados por meio da função `getSymbols()` do pacote `quantmod`. 
+
+Os dados estão na frequência diária. São informações de preço de abertura, maior valor, menor valor, fechamento, volume e ajustado. 
+
+Utilizaremos informações entre as datas "2019-01-01" e "2020-07-01". 
+
+Essa função recebe as informações:
+
+  - `Symbols` --> tickers (pesquise pelo símbolo no [yahoo finance](https://finance.yahoo.com/))
+  - `src` --> fonte ("yahoo")
+  - `from` --> data inicial
+  - `to` --> data final
+  - `auto.assign` = TRUE --> cria-se um objeto para cada símbolo
+  - `warnings` = FALSE --> não mostra as advertências
+  
+```{r}
+# criar um vetor para salvar os tickers
+simbolos <- c("B3SA3.SA", "PETR4.SA", "VALE3.SA")
+
+# cirar um objeto chamado precos 
+precos <- getSymbols(Symbols = simbolos, 
+           src = "yahoo", 
+           from = "2015-01-01",
+           to = "2020-08-01",
+           auto.assign = TRUE,
+           warnings = FALSE) %>% 
+  map(~Ad(get(.))) %>% # função para isolar as cotações ajustadas (Adjusted). # se quiseres a cotação de fechamento, utilize Cl(get(.))
+  reduce(merge) %>%  # vai juntar todas as informações em uma única base, onde cada papel se tornará uma coluna. 
+  `colnames<-` (simbolos) # vai renomear as colunas pelo nome dos símbolos
+```
+  
+Agora podemos verificar a estrutura dos dados precos.
+
+```{r}
+# ver a estrutura dos dados
+precos %>% 
+  str()
+```
+
+É um objeto xts que é semelhante a um data frame de séries temporais.
+
+```{r}
+# visualizar as 6 primeiras obs
+head(precos, 6)
+
+# visualizar as 6 últimas obs
+tail(precos, 6)
+```
+
+### 2. Estruturação dos dados financeiros
+#### 2.1 Transformação em dados mensais
+
+No caso em questão, vamos calcular o log retorno de dados mensais. Para tanto, vamos utilizar a função `to.monthly` do pacote `quantmod`. É possível selecionar o primeiro ou o último dia do mês como referência. 
+
+A função recebe os parâmetros:
+
+- `x` --> dados no formato `xts`.
+- `indexAt` --> "lastof" (último dia do mês) ou "firstof" (primeiro dia do mês)
+- `OHLC` --> `FALSE`
+
+```{r}
+# transformar em dados mensais. 
+precos_mensais <- to.monthly(x = precos, 
+           indexAt = "lastof",
+           OHLC = FALSE) # não quero retornar um objeto OHLC - Manteremos xts
+```
+
+Vamos visualizar a estrutura e algumas observações:
+
+```{r}
+# estrutura 
+precos_mensais %>% 
+  str()
+
+# 6 primeiras obs.
+head(precos_mensais, 6)
+
+# 6 últimas obs. 
+tail(precos_mensais, 6)
+```
+
+#### 2.2 Cálculo do Retorno
+
+Agora podemos calcular o log retorno mensal:
+
+$$ Ret_t = \frac{ln(P_t)}{ln(P_t-1)}$$
+A função para calcular o log retorno é `Return.calculate(prices=precos_mensais, method = "log")`. 
+
+Para calcular o retorno simples, basta utilizar `method = "discrete"`. 
+
+
+```{r}
+# calculando retorno mensal
+retorno <- Return.calculate(prices = precos_mensais, 
+                            method = "log") %>% 
+            na.omit() # remover os dados NA da primeira linha
+```
+
+Visualizar estrutura e os dados:
+
+```{r}
+# estrutura
+retorno %>% 
+  str()
+
+# 6 primeiras obs
+head(retorno, 6)
+
+# 6 últimas obs
+tail(retorno, 6)
+```
+
+Verifique que selecionamos os últimos dias mensais de negociação.  
+
+
+#### 2.3 Visualização das séries
+
+Vamos criar gráficos das séries financeiras de retorno. 
+
+##### Gráfico de Linha
+
+Utilizaremos o pacote `highchart`. 
+
+Adicionaremos o type "stock". 
+
+```{r}
+# gráfico de linha dos retornos
+highchart(type="stock") %>%  
+  hc_title(text = "Log retorno mensal") %>%  # título
+  hc_add_series(retorno[, simbolos[1]],  
+                name = simbolos[1]) %>%  # adicionando a primeira série
+  hc_add_series(retorno[, simbolos[2]],
+                name = simbolos[2]) %>% # adicionando a segunda séries
+  hc_add_series(retorno[, simbolos[3]],
+                name = simbolos[3]) %>% # adicionando a segunda séries
+  hc_add_theme(hc_theme_flat()) %>%  # tema
+  hc_navigator(enabled = FALSE) %>%  
+  hc_scrollbar(enabled = FALSE) %>% 
+  hc_exporting(enabled = FALSE) %>% 
+  hc_legend(enabled = TRUE)
+```
+
+##### Histograma
+
+Com o pacote `highchart`, podemos usar a função `hist()` para criar o objeto histograma, em seguida, chamamos a função `hchart()` com o objeto criado. 
+
+```{r}
+# Histograma
+hc_histograma <- hist(retorno[, simbolos[1]], 
+                      breaks = 20, # quantidade de intervalos
+                      plot = FALSE) # para não plotar agora
+
+hchart(hc_histograma, color = "cornflowerblue") %>% 
+  hc_title(text = paste(simbolos[1],
+                        "Distribuição do Log Retorno",
+                        sep = " ")) %>% 
+  hc_add_theme(hc_theme_flat()) %>% 
+  hc_exporting(enabled = TRUE) %>% 
+  hc_legend(enabled = FALSE)
+```
+
+Como iremos repetir esse processo de criação de histograma para mais de uma ação, é importante criarmos uma função. 
+
+```{r}
+# criando função para plotar o histograma
+hc_histograma_fun <- function(n = 1, objeto, color, breaks){
+  hc_histograma <- hist(objeto[, simbolos[n]],
+                        breaks = breaks,
+                        plot = FALSE)
+  hchart(hc_histograma, color = color) %>% 
+    hc_title(text = paste(simbolos[n],
+                        "Distribuição do Log Retorno",
+                        sep = " ")) %>% 
+    hc_add_theme(hc_theme_flat()) %>% 
+    hc_exporting(enabled = TRUE) %>% 
+    hc_legend(enabled = FALSE)
+}
+```
+
+Agora podemos pedir para calcular os histogramas para várias funções. 
+
+Além disso, você pode utilizar a função `map` para usar a função que criamos para todas as ações. 
+
+```{r}
+# criando os histogramas individualmente
+hc_histograma_fun(1, retorno, "cornflowerblue", 20) # B3SA3
+hc_histograma_fun(2, retorno, "purple", 20) # PIBB11
+
+# usando a função map para criar histograma para todas as ações
+map(1:3, hc_histograma_fun, retorno, "blue", 20)
+```
