@@ -94,7 +94,7 @@ dfp_con <- function(dfps_id, ano_inicial, ano_final){
 }
 
 # Chamar a função que já faz o processo de download
-dfp_con(dfps_id = c("bpp", "bpa", "dre"), ano_inicial = 2018, ano_final = 2019)
+dfp_con(dfps_id = c("bpp", "bpa", "dre"), ano_inicial = 2017, ano_final = 2019)
 ```
 
 
@@ -174,7 +174,9 @@ df_ultimo %>%
 df_wide <- df_ultimo %>% 
   distinct() %>% 
   pivot_wider(names_from = DS_CONTA, 
-               values_from = VL_CONTA)
+               values_from = VL_CONTA) %>% 
+  unnest() # desagrupar as linhas
+
 ```
 
 ### 2. Agora podemos iniciar a apresentação das estatísticas descritivas
